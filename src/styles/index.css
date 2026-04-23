@@ -1,40 +1,64 @@
+/* ─────────────────────────────────────────────
+   基础层：Tailwind v4 + 动画工具库
+   ───────────────────────────────────────────── */
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* dark 变体：父元素加 .dark 类即可切换（预留） */
 @custom-variant dark (&:is(.dark *));
 
+/* ─────────────────────────────────────────────
+   设计令牌：全局 CSS 变量
+   修改这里即可全局换色，无需改组件代码
+   ───────────────────────────────────────────── */
 :root {
+  /* 背景层级：bg < bg2（卡片）< bg3（hover） */
   --bg: #0d0f14;
   --bg2: #13161e;
   --bg3: #1a1e28;
-  --lk: #00d4aa;
-  --sip: #ff6b6b;
-  --rtp: #4fc3f7;
-  --net: #ffd54f;
-  --obs: #ce93d8;
-  --media: #81c784;
+
+  /* 分类主题色 */
+  --lk:    #00d4aa;   /* LiveKit 绿 */
+  --sip:   #ff6b6b;   /* SIP 红 */
+  --rtp:   #4fc3f7;   /* RTP 蓝 */
+  --net:   #ffd54f;   /* 网络 黄 */
+  --obs:   #ce93d8;   /* 可观测 紫 */
+  --media: #81c784;   /* 媒体 草绿 */
 }
 
+/* ─────────────────────────────────────────────
+   Tailwind 主题扩展：把 CSS 变量接入 Tailwind 工具类
+   使用示例：bg-bg2、text-lk、font-mono
+   ───────────────────────────────────────────── */
 @theme inline {
-  --font-mono: "JetBrains Mono", monospace;
-  --font-sans: "Syne", sans-serif;
-  --color-bg: var(--bg);
-  --color-bg2: var(--bg2);
-  --color-bg3: var(--bg3);
-  --color-lk: var(--lk);
-  --color-sip: var(--sip);
-  --color-rtp: var(--rtp);
-  --color-net: var(--net);
-  --color-obs: var(--obs);
+  /* 字体族 */
+  --font-mono: "JetBrains Mono", monospace;   /* 代码 / 命令块 */
+  --font-sans: "Syne", sans-serif;             /* 标题 / 正文 */
+
+  /* 颜色令牌 → Tailwind 颜色工具类 */
+  --color-bg:    var(--bg);
+  --color-bg2:   var(--bg2);
+  --color-bg3:   var(--bg3);
+  --color-lk:    var(--lk);
+  --color-sip:   var(--sip);
+  --color-rtp:   var(--rtp);
+  --color-net:   var(--net);
+  --color-obs:   var(--obs);
   --color-media: var(--media);
 }
 
+/* ─────────────────────────────────────────────
+   重置：消除浏览器默认间距
+   ───────────────────────────────────────────── */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+/* ─────────────────────────────────────────────
+   Body：基础排版设置
+   ───────────────────────────────────────────── */
 body {
   background: var(--bg);
   color: #e8eaf0;
@@ -42,14 +66,9 @@ body {
   min-height: 100vh;
 }
 
-::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 2px;
-}
+/* ─────────────────────────────────────────────
+   自定义滚动条：细条风格，不抢视觉
+   ───────────────────────────────────────────── */
+::-webkit-scrollbar          { width: 4px; height: 4px; }
+::-webkit-scrollbar-track    { background: transparent; }
+::-webkit-scrollbar-thumb    { background: rgba(255,255,255,.1); border-radius: 2px; }
