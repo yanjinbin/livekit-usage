@@ -1,0 +1,49 @@
+name: Deploy
+
+on:
+  push:
+    branches: [master]
+    tags: ["v*"]
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: ${{ startsWith(github.ref, 'refs/tags/') && 'Production' || 'Preview' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Deploy to Vercel (preview)
+        if: github.ref == 'refs/heads/master'
+        run: |
+          pnpm dlx vercel --token ${{ secrets.VERCEL_TOKEN }} \
+            --yes \
+            2>&1 | tee /tmp/vercel-out.txt
+          grep -oP 'https://\S+\.vercel\.app' /tmp/vercel-out.txt | tail -1 >> $GITHUB_STEP_SUMMARY
+
+      - name: Deploy to Vercel (production)
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          pnpm dlx vercel --token ${{ secrets.VERCEL_TOKEN }} \
+            --prod \
+            --yes \
+            2>&1 | tee /tmp/vercel-out.txt
+          echo "### Production deployed: $(grep -oP 'https://\S+\.vercel\.app' /tmp/vercel-out.txt | tail -1)" >> $GITHUB_STEP_SUMMARY
